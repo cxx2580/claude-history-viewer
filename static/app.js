@@ -4,6 +4,7 @@ const state = {
     projects: [],
     currentSessionId: null,
     searchTimeout: null,
+    sortBy: "time", // time | count | name
 };
 
 // ========== API ==========
@@ -66,14 +67,35 @@ function formatFullTime(ts) {
 
 // ========== 渲染：侧边栏 ==========
 
+function sortProjects(projects, sortBy) {
+    const sorted = [...projects];
+    switch (sortBy) {
+        case "time":
+            sorted.sort((a, b) => {
+                const ta = a.sessions[0]?.timestamp || "";
+                const tb = b.sessions[0]?.timestamp || "";
+                return tb.localeCompare(ta);
+            });
+            break;
+        case "count":
+            sorted.sort((a, b) => b.sessionCount - a.sessionCount);
+            break;
+        case "name":
+            sorted.sort((a, b) => a.projectName.localeCompare(b.projectName, "zh"));
+            break;
+    }
+    return sorted;
+}
+
 function renderSidebar(projects) {
     const el = document.getElementById("projectList");
-    if (!projects.length) {
+    const sorted = sortProjects(projects, state.sortBy);
+    if (!sorted.length) {
         el.innerHTML = '<div class="loading">暂无会话数据</div>';
         return;
     }
 
-    el.innerHTML = projects.map((proj, pi) => `
+    el.innerHTML = sorted.map((proj, pi) => `
         <div class="project-group">
             <div class="project-header" data-pi="${pi}">
                 <span class="arrow">&#9660;</span>
@@ -560,6 +582,16 @@ async function init() {
     document.getElementById("btnRefresh").addEventListener("click", async () => {
         await api("/api/refresh");
         await loadProjects();
+    });
+
+    // 排序按钮
+    document.querySelectorAll(".sort-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+            document.querySelectorAll(".sort-btn").forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+            state.sortBy = btn.dataset.sort;
+            renderSidebar(state.projects);
+        });
     });
 
     await loadProjects();

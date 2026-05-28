@@ -169,6 +169,43 @@ html, body {
     border-radius: 3px;
 }
 
+.sort-bar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-secondary);
+    position: sticky;
+    top: 0;
+    z-index: 20;
+}
+
+.sort-label {
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+.sort-btn {
+    padding: 3px 8px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text-secondary);
+    font-size: 11px;
+    cursor: pointer;
+}
+
+.sort-btn:hover {
+    background: var(--bg-tertiary);
+}
+
+.sort-btn.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
+
 .project-group {
     border-bottom: 1px solid var(--border);
 }
