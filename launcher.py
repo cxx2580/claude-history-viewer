@@ -3,25 +3,40 @@
 import subprocess
 import os
 import platform
+import shutil
 import tempfile
 
 
 def _get_claude_cmd():
-    """获取 claude CLI 完整路径"""
+    """获取 claude CLI 完整路径，依次尝试多种安装方式"""
+    # 1. 原生安装
     native = os.path.expandvars(r"%USERPROFILE%\.local\bin\claude.exe")
     if os.path.exists(native):
         return native
+
+    # 2. Electron 打包版
     base = os.path.expandvars(r"%LOCALAPPDATA%\Claude-3p\claude-code")
-    if not os.path.isdir(base):
-        return "claude"
-    versions = sorted(
-        [d for d in os.listdir(base) if os.path.isdir(os.path.join(base, d))],
-        reverse=True,
-    )
-    for v in versions:
-        exe = os.path.join(base, v, "claude.exe")
-        if os.path.exists(exe):
-            return exe
+    if os.path.isdir(base):
+        versions = sorted(
+            [d for d in os.listdir(base) if os.path.isdir(os.path.join(base, d))],
+            reverse=True,
+        )
+        for v in versions:
+            exe = os.path.join(base, v, "claude.exe")
+            if os.path.exists(exe):
+                return exe
+
+    # 3. npm 全局安装
+    npm_global = os.path.expandvars(r"%APPDATA%\npm\claude.cmd")
+    if os.path.exists(npm_global):
+        return npm_global
+
+    # 4. PATH 中查找
+    found = shutil.which("claude") or shutil.which("claude.cmd")
+    if found:
+        return found
+
+    # 5. 回退：直接用名字（依赖 PATH）
     return "claude"
 
 
@@ -48,11 +63,14 @@ def resume_session(session_id, project_path):
         system = platform.system()
         if system == "Windows":
             claude = _get_claude_cmd()
-            local_bin = os.path.expandvars(r"%USERPROFILE%\.local\bin")
 
             _cleanup_old_scripts()
 
-            lines = [f'$env:Path = "{local_bin};$env:Path"']
+            lines = []
+            # 如果 claude 不在 PATH 里，把它所在目录加入 PATH
+            if not shutil.which("claude") and not shutil.which("claude.cmd"):
+                claude_dir = os.path.dirname(os.path.abspath(claude))
+                lines.append(f'$env:Path = "{claude_dir};$env:Path"')
             if project_path and os.path.isdir(project_path):
                 lines.append(f'cd "{project_path}"')
             lines.append(f'claude --resume {session_id}')
