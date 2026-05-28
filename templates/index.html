@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Claude Code 会话浏览器</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <header id="header">
+        <div class="header-left">
+            <h1>Claude Code 会话浏览器</h1>
+        </div>
+        <div class="header-center">
+            <input type="text" id="searchInput" placeholder="搜索会话..." autocomplete="off">
+            <div id="searchResults" class="search-results hidden"></div>
+        </div>
+        <div class="header-right">
+            <button id="btnDashboard" title="仪表盘">统计</button>
+            <button id="btnRefresh" title="刷新数据">刷新</button>
+        </div>
+    </header>
+
+    <main id="main">
+        <aside id="sidebar">
+            <div id="projectList"></div>
+        </aside>
+        <section id="content">
+            <div id="welcome" class="welcome">
+                <h2>欢迎使用 Claude Code 会话浏览器</h2>
+                <p>从左侧选择一个会话查看详情，或使用顶部搜索框搜索</p>
+                <div id="quickStats" class="quick-stats"></div>
+            </div>
+            <div id="transcript" class="transcript hidden"></div>
+            <div id="dashboard" class="dashboard hidden"></div>
+        </section>
+    </main>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>

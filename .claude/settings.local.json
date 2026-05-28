@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(gh auth *)",
+      "Bash(git config *)",
+      "Read(//c/Users/xinshao/**)",
+      "Read(//c/Users/xinshao/.ssh/**)",
+      "Bash(git credential-manager *)",
+      "Bash(where gh *)",
+      "Bash(git init *)",
+      "Bash(git add *)",
+      "Bash(git rm *)",
+      "Bash(git commit *)"
+    ]
+  }
+}
