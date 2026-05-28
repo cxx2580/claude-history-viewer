@@ -1,4 +1,3 @@
-[README.md](https://github.com/user-attachments/files/28349293/README.md)
 # Claude Code 会话历史浏览器
 
 一个本地 Web 应用，用于浏览、搜索和管理 Claude Code 的历史会话记录。
